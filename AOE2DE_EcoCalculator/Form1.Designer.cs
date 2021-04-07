@@ -69,6 +69,12 @@ namespace AOE2DE_EcoCalculator
             this.StoneCount = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.FarmCostPerMinute = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.FarmLifeTime = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.RelicCountText = new System.Windows.Forms.Label();
+            this.RelicCount = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // Calculate
@@ -452,11 +458,71 @@ namespace AOE2DE_EcoCalculator
             this.FarmCostPerMinute.TabIndex = 38;
             this.FarmCostPerMinute.Text = "????";
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label5.Location = new System.Drawing.Point(424, 344);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(146, 20);
+            this.label5.TabIndex = 41;
+            this.label5.Text = "сек. живёт ферма";
+            // 
+            // FarmLifeTime
+            // 
+            this.FarmLifeTime.AutoSize = true;
+            this.FarmLifeTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.FarmLifeTime.Location = new System.Drawing.Point(359, 340);
+            this.FarmLifeTime.Name = "FarmLifeTime";
+            this.FarmLifeTime.Size = new System.Drawing.Size(60, 26);
+            this.FarmLifeTime.TabIndex = 40;
+            this.FarmLifeTime.Text = "????";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(653, 19);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(75, 13);
+            this.label7.TabIndex = 42;
+            this.label7.Text = "Цивилизация";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(598, 40);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(187, 21);
+            this.comboBox1.TabIndex = 43;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // RelicCountText
+            // 
+            this.RelicCountText.AutoSize = true;
+            this.RelicCountText.Location = new System.Drawing.Point(62, 251);
+            this.RelicCountText.Name = "RelicCountText";
+            this.RelicCountText.Size = new System.Drawing.Size(55, 13);
+            this.RelicCountText.TabIndex = 45;
+            this.RelicCountText.Text = "реликвий";
+            // 
+            // RelicCount
+            // 
+            this.RelicCount.Location = new System.Drawing.Point(13, 248);
+            this.RelicCount.Name = "RelicCount";
+            this.RelicCount.Size = new System.Drawing.Size(42, 20);
+            this.RelicCount.TabIndex = 44;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(581, 535);
+            this.ClientSize = new System.Drawing.Size(854, 535);
+            this.Controls.Add(this.RelicCountText);
+            this.Controls.Add(this.RelicCount);
+            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.FarmLifeTime);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.FarmCostPerMinute);
             this.Controls.Add(this.label8);
@@ -546,6 +612,12 @@ namespace AOE2DE_EcoCalculator
         private System.Windows.Forms.Label StoneCount;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label FarmCostPerMinute;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label FarmLifeTime;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label RelicCountText;
+        private System.Windows.Forms.TextBox RelicCount;
     }
 }
 

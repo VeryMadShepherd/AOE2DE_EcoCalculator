@@ -21,6 +21,8 @@ namespace AOE2DE_EcoCalculator
         const double BaseStoneMinerGatheringRate = 0.36;
         const double BaseShepherdMinerGatheringRate = 0.33;
         const double BaseForagerMinerGatheringRate = 0.31;
+        const double RelicBaseGoldIncome = 0.5;
+        const double RelicBaseFoodIncome = 0.33;
         //walking factor
         double ForagerWalkingFactor = 1;
         double HunterWalkingFactor = 1;
@@ -48,9 +50,14 @@ namespace AOE2DE_EcoCalculator
         int FarmBaseFoodAmount = 175;
         int FarmBaseBuildingTime = 15;
         int FarmBaseCost = 60;
+        //civilizations
+        List<Civilization> Civilizations = new List<Civilization>();
+        Civilization CurrentCiv;
         public Form1()
         {
             InitializeComponent();
+            InitializeCivs();
+            comboBox1.Items.AddRange(Civilizations.ToArray());
         }
         #region events
         private void DoubleBitAxe_CheckedChanged(object sender, EventArgs e) => DoubleAxeMod = DoubleBitAxe.Checked ? 1 : 1.2;
@@ -90,23 +97,180 @@ namespace AOE2DE_EcoCalculator
             int.TryParse(StoneCollectorsCount.Text, out int iStoneCollectorsCount);
             double CalculatedFarmProductionRate = BaseFarmerGatheringRate * WheelbarrowMod * HandCartMod;
             CalculatedFarmProductionRate = CalculatedFarmProductionRate > 0.44 ? 0.44 : CalculatedFarmProductionRate;
+            int.TryParse(RelicCount.Text, out int iRelicCount);
             double CalculatedFoodRate =
-                iFarmersCount * CalculatedFarmProductionRate +
-                iForagersCount * BaseForagerMinerGatheringRate * WheelbarrowMod * HandCartMod * ForagerWalkingFactor +
-                iHuntersCount * BaseHunterGatheringRate * WheelbarrowMod * HandCartMod * HunterWalkingFactor +
-                iShepherdsCount * BaseShepherdMinerGatheringRate * WheelbarrowMod * HandCartMod * ShepherdWalkingFactor+
-                iFishermansCount * BaseFishermanGatheringRate * WheelbarrowMod * HandCartMod * FishermanWalkingFactor;
-            double CalculatedWoodRate = iLumberjackCount * BaseLumberjackGatheringRate * DoubleAxeMod * BowSawMod * TwoManSawMod * WheelbarrowMod * HandCartMod;
-            double CalculatedGoldRate = iMinersCount * BaseGoldMinerGatheringRate * GoldMiningMod * GoldShaftMiningMod * WheelbarrowMod * HandCartMod;
-            double CalculatedStoneRate = iStoneCollectorsCount * BaseStoneMinerGatheringRate * StoneMiningMod * StoneShaftMiningMod * WheelbarrowMod * HandCartMod;
+                iFarmersCount * CalculatedFarmProductionRate * CurrentCiv.FarmerGatheringRateMod +
+                iForagersCount * BaseForagerMinerGatheringRate * WheelbarrowMod * HandCartMod * ForagerWalkingFactor * CurrentCiv.ForagerGatheringRateMod +
+                iHuntersCount * BaseHunterGatheringRate * WheelbarrowMod * HandCartMod * HunterWalkingFactor * CurrentCiv.HunterGatheringRateMod +
+                iShepherdsCount * BaseShepherdMinerGatheringRate * WheelbarrowMod * HandCartMod * ShepherdWalkingFactor * CurrentCiv.ShepherdGatheringRateMod+
+                iFishermansCount * BaseFishermanGatheringRate * WheelbarrowMod * HandCartMod * FishermanWalkingFactor * CurrentCiv.FishermanGatheringRateMod +
+                iRelicCount * RelicBaseFoodIncome * CurrentCiv.RelicFoodIncomeMod;
+            double CalculatedWoodRate = 
+                iLumberjackCount * 
+                BaseLumberjackGatheringRate * 
+                DoubleAxeMod * 
+                BowSawMod * 
+                TwoManSawMod * 
+                WheelbarrowMod * 
+                HandCartMod * 
+                CurrentCiv.LumberjackGatheringRateMod;
+            double CalculatedGoldRate = 
+                iMinersCount * 
+                BaseGoldMinerGatheringRate * 
+                GoldMiningMod * 
+                GoldShaftMiningMod * 
+                WheelbarrowMod * 
+                HandCartMod * 
+                CurrentCiv.GoldMinerGatheringRateMod +
+                iRelicCount * RelicBaseGoldIncome * CurrentCiv.RelicIncomeMod;
+            double CalculatedStoneRate =
+                iStoneCollectorsCount * 
+                BaseStoneMinerGatheringRate * 
+                StoneMiningMod * 
+                StoneShaftMiningMod * 
+                WheelbarrowMod * 
+                HandCartMod * 
+                CurrentCiv.StoneMinerGatheringRateMod;
             FoodCount.Text = (CalculatedFoodRate * 60).ToString();
             WoodCount.Text = (CalculatedWoodRate * 60).ToString();
             GoldCount.Text = (CalculatedGoldRate * 60).ToString();
             StoneCount.Text = (CalculatedStoneRate * 60).ToString();
             double FarmFoodAmount = FarmBaseFoodAmount + HorseCollarMod + HeavyPlowMod + CropRotationMod;
             double FarmLivingTime = (FarmFoodAmount / CalculatedFarmProductionRate) + FarmBaseBuildingTime;
-            double FarmWoodCostRate = FarmBaseCost * iFarmersCount * (60 / FarmLivingTime);
+            double FarmWoodCostRate = FarmBaseCost * CurrentCiv.FarmCostMod * iFarmersCount * (60 / FarmLivingTime);
             FarmCostPerMinute.Text = Math.Round(FarmWoodCostRate, 1).ToString();
+            double dFarmLifeTime = (FarmBaseFoodAmount + HorseCollarMod + HeavyPlowMod + CropRotationMod) / CalculatedFarmProductionRate;
+            FarmLifeTime.Text = dFarmLifeTime.ToString();
+        }
+        private void InitializeCivs()
+        {
+            Civilization civ = new Civilization("Britons");
+            civ.ShepherdGatheringRateMod = 1.25;
+            Civilizations.Add(civ);
+            CurrentCiv = civ;
+
+            civ = new Civilization("Byzantines");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Celts");
+            civ.LumberjackGatheringRateMod = 1.15;
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Chinese");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Franks");
+            civ.ForagerGatheringRateMod = 1.15;
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Goths");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Japanese");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Mongols");
+            civ.HunterGatheringRateMod = 1.4;
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Persians");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Saracens");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Teutons");
+            civ.FarmCostMod = 0.6;
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Turks");
+            civ.GoldMinerGatheringRateMod = 1.2;
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Vikings");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Aztecs");
+            civ.RelicIncomeMod = 1.2;
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Huns");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Koreans");
+            civ.StoneMinerGatheringRateMod = 1.2;
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Mayans");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Spanish");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Incas");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Indians");
+            civ.FishermanGatheringRateMod = 1.1;
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Italians");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Magyars");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Slavs");
+
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Berbers");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Ethiopians");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Malians");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Portuguese");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Burmese");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Khmer");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Malay");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Vietnamese");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Bulgarians");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Cumans");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Lithuanians");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Tatars");
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Burgundians");
+            civ.RelicFoodIncomeMod = 1;
+            Civilizations.Add(civ);
+
+            civ = new Civilization("Sicilians");
+            Civilizations.Add(civ);
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CurrentCiv = comboBox1.SelectedItem as Civilization;
         }
     }
 }
